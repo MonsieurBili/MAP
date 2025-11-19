@@ -11,49 +11,89 @@ import Repository.RepositoryPerson;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 
+/**
+ * Service class for computing statistics about the social network.
+ * Provides functionality for analyzing communities and their properties.
+ */
 public class ServiceStatistics {
-    RepositoryDuck repositoryDuck;
-    RepositoryPerson repositoryPerson;
-    FriendshipRepository friendshipRepository;
-    public ServiceStatistics(RepositoryDuck repositoryDuck, RepositoryPerson repositoryPerson, FriendshipRepository friendshipRepository,String filename) {
+    
+    private final RepositoryDuck repositoryDuck;
+    private final RepositoryPerson repositoryPerson;
+    private final FriendshipRepository friendshipRepository;
+    
+    /**
+     * Constructs a ServiceStatistics and loads friendship data from file.
+     *
+     * @param repositoryDuck         repository for duck users
+     * @param repositoryPerson       repository for person users
+     * @param friendshipRepository   repository for friendships
+     * @param filename               path to the file containing friendship data
+     */
+    public ServiceStatistics(RepositoryDuck repositoryDuck, RepositoryPerson repositoryPerson, 
+                           FriendshipRepository friendshipRepository, String filename) {
         this.repositoryDuck = repositoryDuck;
         this.repositoryPerson = repositoryPerson;
         this.friendshipRepository = friendshipRepository;
-        loaddata(filename);
+        loadData(filename);
     }
-    public void loaddata(String filename)
-    {
-        try (BufferedReader br = new BufferedReader(new FileReader(filename)))
-        {
+    
+    /**
+     * Loads friendship data from a file.
+     * Each line should contain two user IDs separated by a comma.
+     *
+     * @param filename the path to the friendship data file
+     */
+    private void loadData(String filename) {
+        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
             String line;
-            IdGenerator idGenerator= IdGenerator.getInstance();
+            IdGenerator idGenerator = IdGenerator.getInstance();
+            
             while ((line = br.readLine()) != null) {
-                String parts[] =line.split(",");
-                Long id1 = Long.parseLong(parts[0]);
-                Long id2 = Long.parseLong(parts[1]);
-                User user1 = repositoryDuck.findOne(id1);
-                User user2 = repositoryDuck.findOne(id2);
-                if (user1 == null)
-                    user1 = repositoryPerson.findOne(id1);
-                if (user2 == null)
-                    user2 = repositoryPerson.findOne(id2);
-                Friendship friendship = new Friendship(user1,user2);
-                friendship.setId(idGenerator.nextId());
-                friendshipRepository.save(friendship);
-
+                String[] parts = line.split(",");
+                if (parts.length < 2) {
+                    System.err.println("Invalid line format: " + line);
+                    continue;
+                }
+                
+                try {
+                    Long id1 = Long.parseLong(parts[0].trim());
+                    Long id2 = Long.parseLong(parts[1].trim());
+                    
+                    User user1 = repositoryDuck.findOne(id1);
+                    if (user1 == null) {
+                        user1 = repositoryPerson.findOne(id1);
+                    }
+                    
+                    User user2 = repositoryDuck.findOne(id2);
+                    if (user2 == null) {
+                        user2 = repositoryPerson.findOne(id2);
+                    }
+                    
+                    if (user1 != null && user2 != null) {
+                        Friendship friendship = new Friendship(user1, user2);
+                        friendship.setId(idGenerator.nextId());
+                        friendshipRepository.save(friendship);
+                    } else {
+                        System.err.println("Could not find users with IDs: " + id1 + ", " + id2);
+                    }
+                } catch (NumberFormatException e) {
+                    System.err.println("Invalid ID format in line: " + line);
+                }
             }
-
-        }
-        catch (Exception e)
-        {
-            System.out.println(e.getMessage());
+        } catch (IOException e) {
+            System.err.println("Error reading friendship file: " + e.getMessage());
         }
     }
 
-    public int CommunityNumber()
-    {
+    /**
+     * Computes the number of connected components (communities) in the social network.
+     *
+     * @return the number of distinct communities
+     */
+    public int CommunityNumber() {
         Set<User>allUsers = getAllUsers();
         if (allUsers.size()==0)
             return 0;
@@ -105,26 +145,41 @@ public class ServiceStatistics {
         }
         return graph;
     }
+    /**
+     * Displays the component (connected group) with the maximum diameter.
+     * The diameter is the longest shortest path between any two nodes in the component.
+     */
     public void showComponentWithMaxDiameter() {
         Map<User, List<User>> graph = createGraph();
         List<Set<User>> components = getAllComponents(graph);
-        Set<User> bestComp = null;
-        int maxD = -1;
-        for (Set<User> comp : components) {
-            int d = diameter(comp, graph);
-            if (d > maxD)
-            {
-                maxD = d;
-                bestComp = comp;
+        
+        Set<User> bestComponent = null;
+        int maxDiameter = -1;
+        
+        for (Set<User> component : components) {
+            int diameter = diameter(component, graph);
+            if (diameter > maxDiameter) {
+                maxDiameter = diameter;
+                bestComponent = component;
             }
         }
-        System.out.println("Max diamter:" + maxD);
-        List<User> list = new ArrayList<>(bestComp);
-        list.sort(Comparator.comparingLong(User::getId));
-        for (int i = 0; i < list.size(); i++) {
-            User u = list.get(i);
-            System.out.print(u.getUsername() + "(id=" + u.getId() + ")");
-            if (i < list.size()-1) System.out.print(", ");
+        
+        if (bestComponent == null || bestComponent.isEmpty()) {
+            System.out.println("No components found");
+            return;
+        }
+        
+        System.out.println("Max diameter: " + maxDiameter);
+        
+        List<User> sortedUsers = new ArrayList<>(bestComponent);
+        sortedUsers.sort(Comparator.comparingLong(User::getId));
+        
+        for (int i = 0; i < sortedUsers.size(); i++) {
+            User user = sortedUsers.get(i);
+            System.out.print(user.getUsername() + "(id=" + user.getId() + ")");
+            if (i < sortedUsers.size() - 1) {
+                System.out.print(", ");
+            }
         }
         System.out.println();
     }
