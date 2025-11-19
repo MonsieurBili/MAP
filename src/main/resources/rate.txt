@@ -1,0 +1,8 @@
+Fulger,fulgeras123,fulger@gmail.com,FLYING,13,5
+Zrummmm,zrummmm12311,zrum@gmail.com,SWIMMING,54,2
+Saormica,ShArsa,sharsha@gmail.com,FLYING_AND_SWIMMING,5,12
+Paullica,paulas,paul@gmail.com,SWIMMING,4,2
+Georgica,george,george@gmail.com,SWIMMING,5,2
+Mitrica,mitritel,mitrica@gmail.com,SWIMMING,5,5
+Rudi,rudica,rudica@gmail.com,SWIMMING,3,5
+Sony,sonica,sony@gmail.com,SWIMMING,2,7

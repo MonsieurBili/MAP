@@ -1,0 +1,5 @@
+Billy,parola123,raul@gmail.com,Bilcsik,Raul,2005-04-15,somer
+Andreea,anaaaaPass23,ana.popescu@yahoo.com,Popescu,Andreea,2001-09-21,student
+Mihai,mihaipass45,mihai.ionescu@gmail.com,Ionescu,Mihai,1998-02-10,inginer
+Elena,elena@2024,elena.dumitru@outlook.com,Dumitru,Elena,2003-12-05,doctor
+Mircea,mirceaparola,mircea@gmail.com,Paulescu,Mircea,2008-05-01,cowboy
