@@ -2,18 +2,17 @@ package Service;
 
 import Domain.Ducks.SwimmingDuck;
 import Domain.RaceEvent;
-import Domain.User;
 import Repository.IdGenerator;
-import Repository.RepositoryRaceEvent;
+import Repository.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ServiceRaceEvent extends ServiceEntity<Long, RaceEvent> {
     IdGenerator idGenerator;
-    RepositoryRaceEvent repository;
+    Repository<Long, RaceEvent> repository;
 
-    public ServiceRaceEvent(RepositoryRaceEvent repository) {
+    public ServiceRaceEvent(Repository<Long, RaceEvent> repository) {
         super(repository);
         this.idGenerator = IdGenerator.getInstance();
         this.repository = repository;
