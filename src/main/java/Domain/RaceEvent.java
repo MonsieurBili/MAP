@@ -33,11 +33,6 @@ public class RaceEvent extends Event<SwimmingDuck>{
         participants.remove(ducky);
     }
 
-    public void startEvent()
-    {
-        notifyObservers();
-    }
-
     @Override
     public void subscribe(User o)
     {
@@ -49,7 +44,10 @@ public class RaceEvent extends Event<SwimmingDuck>{
     {
         subscribers.remove(o);
     }
-
+    @Override
+    public void notifyObservers() {
+       subscribers.forEach(o -> o.update());
+    }
     @Override
     public String toString()
     {

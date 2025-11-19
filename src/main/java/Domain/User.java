@@ -54,7 +54,7 @@ public abstract class User extends Entity<Long> implements Observer {
     @Override
     public void update()
     {
-        System.out.println("Update User");
+        System.out.println(this.getUsername() + " this user was a subscriber and was notified");
     }
 
     ///public abstract void login();

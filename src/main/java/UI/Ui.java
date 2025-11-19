@@ -79,6 +79,7 @@ public class Ui {
         System.out.println("2. Show race events");
         System.out.println("3. Add ducks to the event");
         System.out.println("4. Start an event");
+        System.out.println("5. Subscribe to an event");
     }
 
     public void afiseazaCard()
@@ -212,6 +213,27 @@ public class Ui {
             }
             System.out.println(besttime);
         }
+    }
+
+    public void subscribeEvent()
+    {
+        System.out.println("What event would you like to subscribe?");
+        Scanner sc = new Scanner(System.in);
+        Long id = sc.nextLong();
+        RaceEvent event = serviceRaceEvent.findOne(id);
+        System.out.println("Which user should subscribe?");
+        Long idUser = sc.nextLong();
+        Persoana user = null;
+        try
+        {
+            user = servicePersoana.findOne(idUser);
+
+        }
+        catch (Exception e)
+        {
+        }
+        if (user != null)
+            event.subscribe(user);
     }
     public void run()
     {
@@ -398,6 +420,10 @@ public class Ui {
                             break;
                         case 4:
                             startEvent();
+                            break;
+                        case 5:
+                            subscribeEvent();
+                            break;
                     }
             }
         }

@@ -22,7 +22,7 @@ public class Main {
         ServiceFriendship friendshipService = new ServiceFriendship(generatorId,friendshipRepository);
         ServiceStatistics serviceStatistics = new ServiceStatistics(duckRepository,personRepository,friendshipRepository,"src/main/resources/friendship.txt");
         ServiceCard serviceCard = new ServiceCard(generatorId,cardRepository);
-        RepositoryRaceEvent repositoryRaceEvent = new RepositoryRaceEvent("event.txt",eventValidator);
+        RepositoryRaceEvent repositoryRaceEvent = new RepositoryRaceEvent("src/main/resources/event.txt",eventValidator);
         ServiceRaceEvent serviceRaceEvent = new ServiceRaceEvent(repositoryRaceEvent);
         Ui ui = new Ui(personService,duckService,friendshipService,serviceStatistics,serviceCard,serviceRaceEvent);
         ui.run();
