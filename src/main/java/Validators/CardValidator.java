@@ -1,19 +1,38 @@
 package Validators;
 
 import Domain.Ducks.Card;
-import Domain.Ducks.Duck;
 import Exception.ValidationException;
 
-public class CardValidator implements  Validator<Card>{
-    private StringBuilder errors = new StringBuilder();
+/**
+ * Validator for Card (flock) entities.
+ * Validates that card/flock properties meet business requirements.
+ */
+public class CardValidator implements Validator<Card> {
+    
+    /**
+     * Validates a Card entity according to business rules.
+     *
+     * @param card the card entity to validate
+     * @throws ValidationException if validation fails with detailed error messages
+     */
     @Override
-    public void validate(Card card) throws ValidationException
-    {
-        if (card.getNumeCard().length() < 2)
-        {
-            errors.append("Flock name is too short\n");
+    public void validate(Card card) throws ValidationException {
+        StringBuilder errors = new StringBuilder();
+        
+        if (card == null) {
+            throw new ValidationException("Card cannot be null");
         }
-        if (!errors.isEmpty())
+        
+        if (card.getNumeCard() == null || card.getNumeCard().length() < 2) {
+            errors.append("Flock name is too short (minimum 2 characters)\n");
+        }
+        
+        if (card.getTip() == null) {
+            errors.append("Flock type cannot be null\n");
+        }
+        
+        if (!errors.isEmpty()) {
             throw new ValidationException(errors.toString());
+        }
     }
 }

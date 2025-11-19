@@ -1,7 +1,17 @@
 package Exception;
 
-public class ValidationException extends RuntimeException{
-    public ValidationException(String message){
+/**
+ * Exception thrown when entity validation fails.
+ * This is a runtime exception that carries detailed validation error messages.
+ */
+public class ValidationException extends RuntimeException {
+    
+    /**
+     * Constructs a new ValidationException with the specified error message.
+     *
+     * @param message the detailed validation error message
+     */
+    public ValidationException(String message) {
         super(message);
     }
 }
