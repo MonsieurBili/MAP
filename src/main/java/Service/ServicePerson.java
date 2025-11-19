@@ -3,12 +3,12 @@ package Service;
 
 import Domain.Person.Persoana;
 import Repository.IdGenerator;
-import Repository.RepositoryPerson;
+import Repository.Repository;
 
 public class ServicePerson extends ServiceEntity<Long, Persoana> {
     IdGenerator idGenerator;
-    RepositoryPerson repository;
-    public ServicePerson(IdGenerator idGenerator,RepositoryPerson repository) {
+    Repository<Long, Persoana> repository;
+    public ServicePerson(IdGenerator idGenerator, Repository<Long, Persoana> repository) {
         super(repository);
         this.idGenerator = idGenerator;
         this.repository = repository;

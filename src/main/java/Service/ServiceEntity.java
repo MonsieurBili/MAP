@@ -2,13 +2,13 @@ package Service;
 
 
 import Domain.Entity;
-import Repository.RepositoryEntity;
+import Repository.Repository;
 
 public abstract class ServiceEntity<ID, E extends Entity<ID>> implements Service<ID,E>
 {
-    private final RepositoryEntity<ID,E> repository;
+    private final Repository<ID,E> repository;
 
-    public ServiceEntity(RepositoryEntity<ID,E> repository)
+    public ServiceEntity(Repository<ID,E> repository)
     {
         this.repository = repository;
     }

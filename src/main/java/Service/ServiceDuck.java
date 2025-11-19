@@ -2,13 +2,13 @@ package Service;
 
 import Domain.Ducks.Duck;
 import Repository.IdGenerator;
-import Repository.RepositoryDuck;
+import Repository.Repository;
 
 public class ServiceDuck extends ServiceEntity<Long, Duck>{
     IdGenerator idGenerator;
-    RepositoryDuck repository;
+    Repository<Long, Duck> repository;
 
-    public ServiceDuck(IdGenerator idGenerator, RepositoryDuck repository) {
+    public ServiceDuck(IdGenerator idGenerator, Repository<Long, Duck> repository) {
         super(repository);
         this.idGenerator = idGenerator;
         this.repository = repository;
