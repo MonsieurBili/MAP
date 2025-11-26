@@ -19,7 +19,6 @@ public class ServicePerson extends ServiceEntity<Long, Persoana> {
     @Override
     public Persoana save(Persoana persoana)
     {
-        persoana.setId(idGenerator.nextId());
         repository.save(persoana);
         return persoana;
     }

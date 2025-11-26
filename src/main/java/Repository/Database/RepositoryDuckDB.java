@@ -53,17 +53,17 @@ public class RepositoryDuckDB implements Repository<Long, Duck> {
         }
         return results;
     }
-
     @Override
     public Duck save(Duck entity) {
         if (entity == null) throw new IllegalArgumentException("entity must be not null");
         validator.validate(entity);
 
         final String userSql = "INSERT INTO users (username,email,password,user_type) VALUES (?,?,?,?)";
+
         final String duckSql = "INSERT INTO ducks (id, tip_rata, viteza, rezistenta) VALUES (?,?,?,?)";
 
         try (Connection conn = DatabaseConnection.getConnection()) {
-            conn.setAutoCommit(false);
+
             try (PreparedStatement psUser = conn.prepareStatement(userSql, Statement.RETURN_GENERATED_KEYS)) {
                 psUser.setString(1, entity.getUsername());
                 psUser.setString(2, entity.getEmail());
@@ -83,21 +83,15 @@ public class RepositoryDuckDB implements Repository<Long, Duck> {
                         psDuck.executeUpdate();
                     }
 
-                    conn.commit();
                     entity.setId(userId);
                     return null;
                 }
-            } catch (SQLException ex) {
-                conn.rollback();
-                throw ex;
-            } finally {
-                conn.setAutoCommit(true);
             }
         } catch (SQLException e) {
+
             throw new RuntimeException(e);
         }
     }
-
     @Override
     public Duck delete(Long id) {
         if (id == null) throw new IllegalArgumentException("id must be not null");
@@ -121,9 +115,10 @@ public class RepositoryDuckDB implements Repository<Long, Duck> {
         if (entity.getId() == null) throw new IllegalArgumentException("entity id must be not null");
 
         final String userSql = "UPDATE users SET username=?, email=?, password=?, user_type=? WHERE id=?";
-        final String duckSql = "UPDATE ducks SET tip_rata=?, viteza=?, rezistenta=? WHERE id=?";
+        final String duckSql = "UPDATE ducks SET tip_rata=?, viteza=?, rezistenta=?, idcard=? WHERE id=?";
+
         try (Connection conn = DatabaseConnection.getConnection()) {
-            conn.setAutoCommit(false);
+
             try (PreparedStatement psUser = conn.prepareStatement(userSql);
                  PreparedStatement psDuck = conn.prepareStatement(duckSql)) {
 
@@ -137,18 +132,13 @@ public class RepositoryDuckDB implements Repository<Long, Duck> {
                 psDuck.setString(1, entity.getTipRata().name());
                 psDuck.setDouble(2, entity.getViteza());
                 psDuck.setDouble(3, entity.getRezistenta());
-                psDuck.setLong(4, entity.getId());
+                psDuck.setLong(5, entity.getId());
+                psDuck.setLong(4, entity.getIdCard());
                 int dRows = psDuck.executeUpdate();
-
-                conn.commit();
                 if (uRows == 0 && dRows == 0) return entity;
                 return null;
-            } catch (SQLException ex) {
-                conn.rollback();
-                throw ex;
-            } finally {
-                conn.setAutoCommit(true);
             }
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -162,8 +152,6 @@ public class RepositoryDuckDB implements Repository<Long, Duck> {
         TipRata tipRata = TipRata.valueOf(rs.getString("tip_rata"));
         double viteza = rs.getDouble("viteza");
         double rezistenta = rs.getDouble("rezistenta");
-
-        // use injected factory (stateless) to create concrete subtype
         duckFactory.setData(username, email, password, tipRata, viteza, rezistenta);
         Duck d = duckFactory.createUser();
         d.setId(id);

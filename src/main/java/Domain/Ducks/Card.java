@@ -10,6 +10,7 @@ public class Card extends Entity<Long>
     private List<Duck> membri;
     private TipRata tip;
 
+
     public Card(String numeCard,TipRata tip)
     {
         this.numeCard = numeCard;

@@ -7,13 +7,23 @@ public abstract class Duck extends User {
     private TipRata tipRata;
     private double viteza;
     private double rezistenta;
-    // private Card card;
+     private Long idCard;
 
     public Duck(String username,String email,String password,TipRata tipRata,double viteza,double rezistenta){
         super(username,email,password);
         this.tipRata = tipRata;
         this.viteza = viteza;
         this.rezistenta = rezistenta;
+    }
+
+    public Long getIdCard()
+    {
+        return  idCard;
+    }
+
+    public void setIdCard(Long idCard)
+    {
+        this.idCard = idCard;
     }
 
     public TipRata getTipRata() {

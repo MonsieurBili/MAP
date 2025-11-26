@@ -5,6 +5,7 @@ import Domain.Friendship;
 import Domain.Person.Persoana;
 import Domain.User;
 import Repository.Database.RepositoryDuckDB;
+import Repository.Database.RepositoryFriendshipDb;
 import Repository.Database.RepositoryPersonDB;
 import Repository.FriendshipRepository;
 import Repository.IdGenerator;
@@ -18,14 +19,13 @@ import java.util.*;
 public class ServiceStatistics {
     RepositoryDuckDB repositoryDuck;
     RepositoryPersonDB repositoryPerson;
-    FriendshipRepository friendshipRepository;
-    public ServiceStatistics(RepositoryDuckDB repositoryDuck, RepositoryPersonDB repositoryPerson, FriendshipRepository friendshipRepository, String filename) {
+    RepositoryFriendshipDb friendshipRepository;
+    public ServiceStatistics(RepositoryDuckDB repositoryDuck, RepositoryPersonDB repositoryPerson, RepositoryFriendshipDb friendshipRepository, String filename) {
         this.repositoryDuck = repositoryDuck;
         this.repositoryPerson = repositoryPerson;
         this.friendshipRepository = friendshipRepository;
-        loaddata(filename);
     }
-    public void loaddata(String filename)
+ /*   public void loaddata(String filename)
     {
         try (BufferedReader br = new BufferedReader(new FileReader(filename)))
         {
@@ -52,7 +52,7 @@ public class ServiceStatistics {
         {
             System.out.println(e.getMessage());
         }
-    }
+    }*/
 
     public int CommunityNumber()
     {
@@ -100,10 +100,8 @@ public class ServiceStatistics {
         for (Friendship f : friendshipRepository.findAll()) {
             User user1 = f.getUser1();
             User user2 = f.getUser2();
-            if (allUsers.contains(user1) && allUsers.contains(user2)) {
-                graph.get(user1).add(user2);
-                graph.get(user2).add(user1);
-            }
+            graph.get(user1).add(user2);
+            graph.get(user2).add(user1);
         }
         return graph;
     }

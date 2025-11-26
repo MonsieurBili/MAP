@@ -59,7 +59,6 @@ public class RepositoryPersonDB implements Repository<Long, Persoana> {
         final String personSql = "INSERT INTO persons (id,last_name,first_name,date_of_birth,occupation,empathy_level) VALUES (?,?,?,?,?,?)";
 
         try (Connection conn = DatabaseConnection.getConnection()) {
-            conn.setAutoCommit(false);
             try (PreparedStatement psUser = conn.prepareStatement(userSql, Statement.RETURN_GENERATED_KEYS)) {
                 psUser.setString(1, entity.getUsername());
                 psUser.setString(2, entity.getEmail());
@@ -85,16 +84,9 @@ public class RepositoryPersonDB implements Repository<Long, Persoana> {
                         }
                         psPerson.executeUpdate();
                     }
-
-                    conn.commit();
                     entity.setId(userId);
                     return null;
                 }
-            } catch (SQLException ex) {
-                conn.rollback();
-                throw ex;
-            } finally {
-                conn.setAutoCommit(true);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -105,7 +97,6 @@ public class RepositoryPersonDB implements Repository<Long, Persoana> {
     @Override
     public Persoana delete(Long id) {
         if (id == null) throw new IllegalArgumentException("id must be not null");
-        // Follow same semantic as your in-memory repo: return removed entity
         Persoana existing = findOne(id);
         if (existing == null) return null;
         final String sql = "DELETE FROM users WHERE id = ?";
@@ -128,7 +119,6 @@ public class RepositoryPersonDB implements Repository<Long, Persoana> {
         final String userSql = "UPDATE users SET username=?, email=?, password=?, user_type=? WHERE id=?";
         final String personSql = "UPDATE persons SET last_name=?, first_name=?, date_of_birth=?, occupation=?, empathy_level=? WHERE id=?";
         try (Connection conn = DatabaseConnection.getConnection()) {
-            conn.setAutoCommit(false);
             try (PreparedStatement psUser = conn.prepareStatement(userSql);
                  PreparedStatement psPerson = conn.prepareStatement(personSql)) {
 
@@ -151,14 +141,9 @@ public class RepositoryPersonDB implements Repository<Long, Persoana> {
                 }
                 psPerson.setLong(6, entity.getId());
                 int pRows = psPerson.executeUpdate();
-                conn.commit();
+
                 if (uRows == 0 && pRows == 0) return entity;
                 return null;
-            } catch (SQLException ex) {
-                conn.rollback();
-                throw ex;
-            } finally {
-                conn.setAutoCommit(true);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -166,7 +151,6 @@ public class RepositoryPersonDB implements Repository<Long, Persoana> {
     }
 
     private Persoana mapRow(ResultSet rs) throws SQLException {
-        // Adapt to your Persoana constructor / setters if they differ.
         Persoana p = new Persoana(
                 rs.getString("username"),
                 rs.getString("email"),

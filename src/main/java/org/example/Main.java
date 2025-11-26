@@ -1,7 +1,9 @@
 package org.example;
 
 import Repository.*;
+import Repository.Database.RepositoryCardDb;
 import Repository.Database.RepositoryDuckDB;
+import Repository.Database.RepositoryFriendshipDb;
 import Repository.Database.RepositoryPersonDB;
 import Service.*;
 import UI.Ui;
@@ -18,8 +20,10 @@ public class Main {
         RepositoryPersonDB personRepositorydb = new RepositoryPersonDB(personValidator);
         //RepositoryDuck duckRepository = new RepositoryDuck(duckValidator,"src/main/resources/rate.txt");
         RepositoryDuckDB  duckRepository = new RepositoryDuckDB(duckValidator);
-        FriendshipRepository friendshipRepository =new FriendshipRepository(friendshipValidator);
-        RepositoryCard cardRepository = new RepositoryCard(cardValidator);
+        //FriendshipRepository friendshipRepository =new FriendshipRepository(friendshipValidator);
+        RepositoryFriendshipDb friendshipRepository = new RepositoryFriendshipDb(friendshipValidator, personRepositorydb, duckRepository);
+        //RepositoryCard cardRepository = new RepositoryCard(cardValidator);
+        RepositoryCardDb cardRepository = new RepositoryCardDb(cardValidator);
         IdGenerator generatorId = IdGenerator.getInstance();
         ServicePerson personService = new ServicePerson(generatorId,personRepositorydb);
         ServiceDuck duckService = new ServiceDuck(generatorId,duckRepository);

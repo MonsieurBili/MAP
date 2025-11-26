@@ -1,16 +1,18 @@
 package Service;
 
 import Domain.Friendship;
+import Domain.Person.Persoana;
 import Repository.FriendshipRepository;
 import Repository.IdGenerator;
+import Repository.Repository;
 
 public class ServiceFriendship extends ServiceEntity<Long,Friendship> {
     IdGenerator idGenerator;
-    FriendshipRepository friendshipRepository;
-    public ServiceFriendship(IdGenerator idGenerator,FriendshipRepository friendshipRepository) {
+    private Repository<Long, Friendship> repository;
+    public ServiceFriendship(IdGenerator idGenerator,Repository<Long,Friendship> friendshipRepository) {
         super(friendshipRepository);
         this.idGenerator = idGenerator;
-        this.friendshipRepository = friendshipRepository;
+        this.repository = friendshipRepository;
     }
 
     @Override

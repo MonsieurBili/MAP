@@ -18,7 +18,6 @@ public class ServiceDuck extends ServiceEntity<Long, Duck>{
     @Override
     public Duck save(Duck duck)
     {
-        duck.setId(idGenerator.nextId());
         repository.save(duck);
         return duck;
     }

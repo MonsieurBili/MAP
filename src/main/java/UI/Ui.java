@@ -88,17 +88,10 @@ public class Ui {
         for (Card card : allflocks)
         {
             System.out.println(card.toString());
-            if (!card.getMembri().isEmpty())
+            for (Duck d : card.getMembri())
             {
-                System.out.println("And we've got the members:");
-                for (Duck d : card.getMembri())
-                {
+                if (d.getIdCard() == card.getId())
                     System.out.println(d.toString());
-                }
-            }
-            else
-            {
-                System.out.println("For now we have no members");
             }
         }
     }
@@ -118,6 +111,8 @@ public class Ui {
             System.out.println("This duck is not a type of duck we accept in our flock!");
         }
         else {
+            d.setIdCard(idCard);
+            serviceDuck.update(d);
             card.addMembri(d);
             System.out.println("Adaugarea reusita cu succes !");
         }
@@ -404,6 +399,7 @@ public class Ui {
                             serviceStatistics.showComponentWithMaxDiameter();
                             break;
                     }
+                    break;
                 case 4:
                     afiseazaMeniuEvent();
                     Scanner optiuneEvent = new Scanner(System.in);
