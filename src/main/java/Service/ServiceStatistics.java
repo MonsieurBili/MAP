@@ -4,6 +4,8 @@ import Domain.Ducks.Duck;
 import Domain.Friendship;
 import Domain.Person.Persoana;
 import Domain.User;
+import Repository.Database.RepositoryDuckDB;
+import Repository.Database.RepositoryPersonDB;
 import Repository.FriendshipRepository;
 import Repository.IdGenerator;
 import Repository.RepositoryDuck;
@@ -14,10 +16,10 @@ import java.io.FileReader;
 import java.util.*;
 
 public class ServiceStatistics {
-    RepositoryDuck repositoryDuck;
-    RepositoryPerson repositoryPerson;
+    RepositoryDuckDB repositoryDuck;
+    RepositoryPersonDB repositoryPerson;
     FriendshipRepository friendshipRepository;
-    public ServiceStatistics(RepositoryDuck repositoryDuck, RepositoryPerson repositoryPerson, FriendshipRepository friendshipRepository,String filename) {
+    public ServiceStatistics(RepositoryDuckDB repositoryDuck, RepositoryPersonDB repositoryPerson, FriendshipRepository friendshipRepository, String filename) {
         this.repositoryDuck = repositoryDuck;
         this.repositoryPerson = repositoryPerson;
         this.friendshipRepository = friendshipRepository;

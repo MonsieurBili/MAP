@@ -1,6 +1,8 @@
 package org.example;
 
 import Repository.*;
+import Repository.Database.RepositoryDuckDB;
+import Repository.Database.RepositoryPersonDB;
 import Service.*;
 import UI.Ui;
 import Validators.*;
@@ -12,15 +14,17 @@ public class Main {
         FriendshipValidator friendshipValidator = new FriendshipValidator();
         EventValidator eventValidator = new EventValidator();
         CardValidator cardValidator = new CardValidator();
-        RepositoryPerson personRepository = new RepositoryPerson(personValidator,"src/main/resources/persoane.txt");
-        RepositoryDuck duckRepository = new RepositoryDuck(duckValidator,"src/main/resources/rate.txt");
+        //RepositoryPerson personRepository = new RepositoryPerson(personValidator,"src/main/resources/persoane.txt");
+        RepositoryPersonDB personRepositorydb = new RepositoryPersonDB(personValidator);
+        //RepositoryDuck duckRepository = new RepositoryDuck(duckValidator,"src/main/resources/rate.txt");
+        RepositoryDuckDB  duckRepository = new RepositoryDuckDB(duckValidator);
         FriendshipRepository friendshipRepository =new FriendshipRepository(friendshipValidator);
         RepositoryCard cardRepository = new RepositoryCard(cardValidator);
         IdGenerator generatorId = IdGenerator.getInstance();
-        ServicePerson personService = new ServicePerson(generatorId,personRepository);
+        ServicePerson personService = new ServicePerson(generatorId,personRepositorydb);
         ServiceDuck duckService = new ServiceDuck(generatorId,duckRepository);
         ServiceFriendship friendshipService = new ServiceFriendship(generatorId,friendshipRepository);
-        ServiceStatistics serviceStatistics = new ServiceStatistics(duckRepository,personRepository,friendshipRepository,"src/main/resources/friendship.txt");
+        ServiceStatistics serviceStatistics = new ServiceStatistics(duckRepository,personRepositorydb,friendshipRepository,"src/main/resources/friendship.txt");
         ServiceCard serviceCard = new ServiceCard(generatorId,cardRepository);
         RepositoryRaceEvent repositoryRaceEvent = new RepositoryRaceEvent("src/main/resources/event.txt",eventValidator);
         ServiceRaceEvent serviceRaceEvent = new ServiceRaceEvent(repositoryRaceEvent);

@@ -1,0 +1,172 @@
+package Repository.Database;
+
+import Domain.Ducks.Duck;
+import Domain.Ducks.DuckFactory;
+import Domain.Ducks.TipRata;
+import Repository.Repository;
+import Validators.Validator;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class RepositoryDuckDB implements Repository<Long, Duck> {
+    private final Validator<Duck> validator;
+    private final DuckFactory duckFactory;
+
+    public RepositoryDuckDB(Validator<Duck> validator) {
+        this.validator = validator;
+        this.duckFactory = DuckFactory.getInstance();
+    }
+
+    @Override
+    public Duck findOne(Long id) {
+        if (id == null) throw new IllegalArgumentException("id must be not null");
+        final String sql = "SELECT u.id, u.username, u.email, u.password, u.user_type, " +
+                "d.tip_rata, d.viteza, d.rezistenta " +
+                "FROM users u JOIN ducks d ON u.id = d.id WHERE u.id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setLong(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return mapRow(rs);
+                return null;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public Iterable<Duck> findAll() {
+        final String sql = "SELECT u.id, u.username, u.email, u.password, u.user_type, " +
+                "d.tip_rata, d.viteza, d.rezistenta " +
+                "FROM users u JOIN ducks d ON u.id = d.id";
+        List<Duck> results = new ArrayList<>();
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next())
+                results.add(mapRow(rs));
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return results;
+    }
+
+    @Override
+    public Duck save(Duck entity) {
+        if (entity == null) throw new IllegalArgumentException("entity must be not null");
+        validator.validate(entity);
+
+        final String userSql = "INSERT INTO users (username,email,password,user_type) VALUES (?,?,?,?)";
+        final String duckSql = "INSERT INTO ducks (id, tip_rata, viteza, rezistenta) VALUES (?,?,?,?)";
+
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            conn.setAutoCommit(false);
+            try (PreparedStatement psUser = conn.prepareStatement(userSql, Statement.RETURN_GENERATED_KEYS)) {
+                psUser.setString(1, entity.getUsername());
+                psUser.setString(2, entity.getEmail());
+                psUser.setString(3, entity.getPassword());
+                psUser.setString(4, "DUCK");
+                psUser.executeUpdate();
+
+                try (ResultSet keys = psUser.getGeneratedKeys()) {
+                    if (!keys.next()) throw new SQLException("No id obtained for user");
+                    long userId = keys.getLong(1);
+
+                    try (PreparedStatement psDuck = conn.prepareStatement(duckSql)) {
+                        psDuck.setLong(1, userId);
+                        psDuck.setString(2, entity.getTipRata().name());
+                        psDuck.setDouble(3, entity.getViteza());
+                        psDuck.setDouble(4, entity.getRezistenta());
+                        psDuck.executeUpdate();
+                    }
+
+                    conn.commit();
+                    entity.setId(userId);
+                    return null;
+                }
+            } catch (SQLException ex) {
+                conn.rollback();
+                throw ex;
+            } finally {
+                conn.setAutoCommit(true);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public Duck delete(Long id) {
+        if (id == null) throw new IllegalArgumentException("id must be not null");
+        Duck existing = findOne(id);
+        if (existing == null) return null;
+        final String sql = "DELETE FROM users WHERE id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setLong(1, id);
+            ps.executeUpdate();
+            return existing;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public Duck update(Duck entity) {
+        if (entity == null) throw new IllegalArgumentException("entity must be not null");
+        validator.validate(entity);
+        if (entity.getId() == null) throw new IllegalArgumentException("entity id must be not null");
+
+        final String userSql = "UPDATE users SET username=?, email=?, password=?, user_type=? WHERE id=?";
+        final String duckSql = "UPDATE ducks SET tip_rata=?, viteza=?, rezistenta=? WHERE id=?";
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            conn.setAutoCommit(false);
+            try (PreparedStatement psUser = conn.prepareStatement(userSql);
+                 PreparedStatement psDuck = conn.prepareStatement(duckSql)) {
+
+                psUser.setString(1, entity.getUsername());
+                psUser.setString(2, entity.getEmail());
+                psUser.setString(3, entity.getPassword());
+                psUser.setString(4, "DUCK");
+                psUser.setLong(5, entity.getId());
+                int uRows = psUser.executeUpdate();
+
+                psDuck.setString(1, entity.getTipRata().name());
+                psDuck.setDouble(2, entity.getViteza());
+                psDuck.setDouble(3, entity.getRezistenta());
+                psDuck.setLong(4, entity.getId());
+                int dRows = psDuck.executeUpdate();
+
+                conn.commit();
+                if (uRows == 0 && dRows == 0) return entity;
+                return null;
+            } catch (SQLException ex) {
+                conn.rollback();
+                throw ex;
+            } finally {
+                conn.setAutoCommit(true);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Duck mapRow(ResultSet rs) throws SQLException {
+        Long id = rs.getLong("id");
+        String username = rs.getString("username");
+        String email = rs.getString("email");
+        String password = rs.getString("password");
+        TipRata tipRata = TipRata.valueOf(rs.getString("tip_rata"));
+        double viteza = rs.getDouble("viteza");
+        double rezistenta = rs.getDouble("rezistenta");
+
+        // use injected factory (stateless) to create concrete subtype
+        duckFactory.setData(username, email, password, tipRata, viteza, rezistenta);
+        Duck d = duckFactory.createUser();
+        d.setId(id);
+        return d;
+    }
+}
