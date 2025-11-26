@@ -4,26 +4,29 @@ import Domain.Ducks.Duck;
 import Domain.Friendship;
 import Domain.Person.Persoana;
 import Domain.User;
-import Repository.Database.RepositoryDuckDB;
-import Repository.Database.RepositoryPersonDB;
-import Repository.FriendshipRepository;
+import Repository.Repository;
 import Repository.IdGenerator;
-import Repository.RepositoryDuck;
-import Repository.RepositoryPerson;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.*;
 
 public class ServiceStatistics {
-    RepositoryDuckDB repositoryDuck;
-    RepositoryPersonDB repositoryPerson;
-    FriendshipRepository friendshipRepository;
-    public ServiceStatistics(RepositoryDuckDB repositoryDuck, RepositoryPersonDB repositoryPerson, FriendshipRepository friendshipRepository, String filename) {
+    Repository<Long, Duck> repositoryDuck;
+    Repository<Long, Persoana> repositoryPerson;
+    Repository<Long, Friendship> friendshipRepository;
+
+    public ServiceStatistics(Repository<Long, Duck> repositoryDuck, Repository<Long, Persoana> repositoryPerson, Repository<Long, Friendship> friendshipRepository, String filename) {
         this.repositoryDuck = repositoryDuck;
         this.repositoryPerson = repositoryPerson;
         this.friendshipRepository = friendshipRepository;
         loaddata(filename);
+    }
+
+    public ServiceStatistics(Repository<Long, Duck> repositoryDuck, Repository<Long, Persoana> repositoryPerson, Repository<Long, Friendship> friendshipRepository) {
+        this.repositoryDuck = repositoryDuck;
+        this.repositoryPerson = repositoryPerson;
+        this.friendshipRepository = friendshipRepository;
     }
     public void loaddata(String filename)
     {
