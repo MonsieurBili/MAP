@@ -1,6 +1,9 @@
 package Repository.Database;
 
+import Domain.Ducks.Duck;
+import Domain.Ducks.SwimmingDuck;
 import Domain.RaceEvent;
+import Domain.User;
 import Repository.Repository;
 import Validators.Validator;
 
@@ -10,9 +13,13 @@ import java.util.List;
 
 public class RepositoryEventDb implements Repository<Long, RaceEvent> {
     private final Validator<RaceEvent> validator;
+    private final RepositoryDuckDB repositoryDuckDB;
+    private final RepositoryPersonDB repositoryPersonDB;
 
-    public RepositoryEventDb(Validator<RaceEvent> validator) {
+    public RepositoryEventDb(Validator<RaceEvent> validator, RepositoryDuckDB repositoryDuckDB, RepositoryPersonDB repositoryPersonDB) {
         this.validator = validator;
+        this.repositoryDuckDB = repositoryDuckDB;
+        this.repositoryPersonDB = repositoryPersonDB;
     }
 
     @Override
@@ -23,7 +30,12 @@ public class RepositoryEventDb implements Repository<Long, RaceEvent> {
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setLong(1, id);
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) return mapRow(rs);
+                if (rs.next()) {
+                    RaceEvent event = mapRow(rs);
+                    loadParticipants(event);
+                    loadSubscribers(event);
+                    return event;
+                }
                 return null;
             }
         } catch (SQLException e) {
@@ -38,8 +50,12 @@ public class RepositoryEventDb implements Repository<Long, RaceEvent> {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
-            while (rs.next())
-                results.add(mapRow(rs));
+            while (rs.next()) {
+                RaceEvent event = mapRow(rs);
+                loadParticipants(event);
+                loadSubscribers(event);
+                results.add(event);
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -61,6 +77,8 @@ public class RepositoryEventDb implements Repository<Long, RaceEvent> {
                     entity.setId(keys.getLong(1));
                 }
             }
+            saveParticipants(entity);
+            saveSubscribers(entity);
             return null;
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -96,6 +114,10 @@ public class RepositoryEventDb implements Repository<Long, RaceEvent> {
             ps.setLong(3, entity.getId());
             int rows = ps.executeUpdate();
             if (rows == 0) return entity;
+            deleteParticipants(entity.getId());
+            deleteSubscribers(entity.getId());
+            saveParticipants(entity);
+            saveSubscribers(entity);
             return null;
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -109,5 +131,98 @@ public class RepositoryEventDb implements Repository<Long, RaceEvent> {
         RaceEvent event = new RaceEvent(name, location);
         event.setId(id);
         return event;
+    }
+
+    private void loadParticipants(RaceEvent event) {
+        final String sql = "SELECT duck_id FROM event_participants WHERE event_id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setLong(1, event.getId());
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Long duckId = rs.getLong("duck_id");
+                    Duck duck = repositoryDuckDB.findOne(duckId);
+                    if (duck instanceof SwimmingDuck) {
+                        event.addParticipant((SwimmingDuck) duck);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void loadSubscribers(RaceEvent event) {
+        final String sql = "SELECT user_id FROM event_subscribers WHERE event_id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setLong(1, event.getId());
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Long userId = rs.getLong("user_id");
+                    User user = repositoryDuckDB.findOne(userId);
+                    if (user == null) {
+                        user = repositoryPersonDB.findOne(userId);
+                    }
+                    if (user != null) {
+                        event.subscribe(user);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void saveParticipants(RaceEvent event) {
+        final String sql = "INSERT INTO event_participants (event_id, duck_id) VALUES (?, ?)";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            for (SwimmingDuck participant : event.getParticipants()) {
+                ps.setLong(1, event.getId());
+                ps.setLong(2, participant.getId());
+                ps.addBatch();
+            }
+            ps.executeBatch();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void saveSubscribers(RaceEvent event) {
+        final String sql = "INSERT INTO event_subscribers (event_id, user_id) VALUES (?, ?)";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            for (User subscriber : event.getSubscribers()) {
+                ps.setLong(1, event.getId());
+                ps.setLong(2, subscriber.getId());
+                ps.addBatch();
+            }
+            ps.executeBatch();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void deleteParticipants(Long eventId) {
+        final String sql = "DELETE FROM event_participants WHERE event_id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setLong(1, eventId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void deleteSubscribers(Long eventId) {
+        final String sql = "DELETE FROM event_subscribers WHERE event_id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setLong(1, eventId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

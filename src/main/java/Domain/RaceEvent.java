@@ -44,6 +44,11 @@ public class RaceEvent extends Event<SwimmingDuck>{
     {
         subscribers.remove(o);
     }
+
+    public List<User> getSubscribers() {
+        return subscribers;
+    }
+
     @Override
     public void notifyObservers() {
        subscribers.forEach(o -> o.update());
