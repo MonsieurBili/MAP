@@ -9,11 +9,12 @@ public abstract class Duck extends User {
     private double rezistenta;
      private Long idCard;
 
-    public Duck(String username,String email,String password,TipRata tipRata,double viteza,double rezistenta){
+    public Duck(String username,String email,String password,TipRata tipRata,double viteza,double rezistenta,long idCard){
         super(username,email,password);
         this.tipRata = tipRata;
         this.viteza = viteza;
         this.rezistenta = rezistenta;
+        this.idCard = idCard;
     }
 
     public Long getIdCard()

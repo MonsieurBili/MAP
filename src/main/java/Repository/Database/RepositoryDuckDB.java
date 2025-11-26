@@ -23,7 +23,7 @@ public class RepositoryDuckDB implements Repository<Long, Duck> {
     public Duck findOne(Long id) {
         if (id == null) throw new IllegalArgumentException("id must be not null");
         final String sql = "SELECT u.id, u.username, u.email, u.password, u.user_type, " +
-                "d.tip_rata, d.viteza, d.rezistenta " +
+                "d.tip_rata, d.viteza, d.rezistenta, d.idcard " +
                 "FROM users u JOIN ducks d ON u.id = d.id WHERE u.id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -40,7 +40,7 @@ public class RepositoryDuckDB implements Repository<Long, Duck> {
     @Override
     public Iterable<Duck> findAll() {
         final String sql = "SELECT u.id, u.username, u.email, u.password, u.user_type, " +
-                "d.tip_rata, d.viteza, d.rezistenta " +
+                "d.tip_rata, d.viteza, d.rezistenta, d.idcard " +
                 "FROM users u JOIN ducks d ON u.id = d.id";
         List<Duck> results = new ArrayList<>();
         try (Connection conn = DatabaseConnection.getConnection();
@@ -60,7 +60,7 @@ public class RepositoryDuckDB implements Repository<Long, Duck> {
 
         final String userSql = "INSERT INTO users (username,email,password,user_type) VALUES (?,?,?,?)";
 
-        final String duckSql = "INSERT INTO ducks (id, tip_rata, viteza, rezistenta) VALUES (?,?,?,?)";
+        final String duckSql = "INSERT INTO ducks (id, tip_rata, viteza, rezistenta,idcard) VALUES (?,?,?,?,?)";
 
         try (Connection conn = DatabaseConnection.getConnection()) {
 
@@ -80,6 +80,7 @@ public class RepositoryDuckDB implements Repository<Long, Duck> {
                         psDuck.setString(2, entity.getTipRata().name());
                         psDuck.setDouble(3, entity.getViteza());
                         psDuck.setDouble(4, entity.getRezistenta());
+                        psDuck.setLong(5, entity.getIdCard());
                         psDuck.executeUpdate();
                     }
 
@@ -152,7 +153,8 @@ public class RepositoryDuckDB implements Repository<Long, Duck> {
         TipRata tipRata = TipRata.valueOf(rs.getString("tip_rata"));
         double viteza = rs.getDouble("viteza");
         double rezistenta = rs.getDouble("rezistenta");
-        duckFactory.setData(username, email, password, tipRata, viteza, rezistenta);
+        long idcard = rs.getLong("idcard");
+        duckFactory.setData(username, email, password, tipRata, viteza, rezistenta,idcard);
         Duck d = duckFactory.createUser();
         d.setId(id);
         return d;

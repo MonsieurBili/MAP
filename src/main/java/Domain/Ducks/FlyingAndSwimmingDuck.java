@@ -1,9 +1,9 @@
 package Domain.Ducks;
 
 public class FlyingAndSwimmingDuck extends Duck implements Inotator, Zburator {
-    FlyingAndSwimmingDuck(String username, String email, String password, TipRata tipRata, double viteza, double rezistenta)
+    FlyingAndSwimmingDuck(String username, String email, String password, TipRata tipRata, double viteza, double rezistenta,long idcard)
     {
-        super(username, email, password, tipRata, viteza, rezistenta);
+        super(username, email, password, tipRata, viteza, rezistenta,idcard);
     }
 
     @Override

@@ -88,7 +88,7 @@ public class Ui {
         for (Card card : allflocks)
         {
             System.out.println(card.toString());
-            for (Duck d : card.getMembri())
+            for (Duck d : serviceDuck.findAll())
             {
                 if (d.getIdCard() == card.getId())
                     System.out.println(d.toString());
@@ -308,7 +308,7 @@ public class Ui {
                                 tipRata = TipRata.SWIMMING;
                             else
                                 tipRata = TipRata.FLYING_AND_SWIMMING;
-                            duckFactory.setData(username,email,password,tipRata,viteza,rezistenta);
+                            duckFactory.setData(username,email,password,tipRata,viteza,rezistenta,0);
                             Duck duck = duckFactory.createUser();
                             try {
                                 serviceDuck.save(duck);

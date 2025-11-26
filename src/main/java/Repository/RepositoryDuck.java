@@ -37,7 +37,7 @@ public class RepositoryDuck extends  RepositoryEntity<Long, Duck>{
                 else
                     tipulRatei = TipRata.FLYING_AND_SWIMMING;
                 DuckFactory duckFactory = DuckFactory.getInstance();
-                duckFactory.setData(username, email, password, tipulRatei, viteza, rezistenta);
+                duckFactory.setData(username, email, password, tipulRatei, viteza, rezistenta,0);
                 Duck d = duckFactory.createUser();
                 d.setId(idGenerator.nextId());
                 super.save(d);
