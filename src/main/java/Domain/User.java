@@ -2,6 +2,8 @@ package Domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
 import Observer.Observer;
 
 public abstract class User extends Entity<Long> implements Observer {
@@ -61,4 +63,18 @@ public abstract class User extends Entity<Long> implements Observer {
     ///public abstract void logout();
     /// public abstract void sendMessage();
     /// public abstract void receiveMessage();
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.getId());
+    }
+
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || !(o instanceof User)) return false;
+
+        User otherUser = (User) o;
+
+        return Objects.equals(this.getId(), otherUser.getId());
+    }
 }

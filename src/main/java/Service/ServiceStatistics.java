@@ -100,8 +100,10 @@ public class ServiceStatistics {
         for (Friendship f : friendshipRepository.findAll()) {
             User user1 = f.getUser1();
             User user2 = f.getUser2();
-            graph.get(user1).add(user2);
-            graph.get(user2).add(user1);
+            if (allUsers.contains(user1) && allUsers.contains(user2)) {
+                graph.get(user1).add(user2);
+                graph.get(user2).add(user1);
+            }
         }
         return graph;
     }

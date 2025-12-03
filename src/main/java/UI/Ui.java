@@ -4,6 +4,7 @@ import Domain.*;
 import Domain.Ducks.*;
 import Domain.Person.Persoana;
 import Domain.Person.PersonFactory;
+import Exception.FriendshipException;
 import Exception.ValidationException;
 import Service.*;
 
@@ -80,6 +81,7 @@ public class Ui {
         System.out.println("3. Add ducks to the event");
         System.out.println("4. Start an event");
         System.out.println("5. Subscribe to an event");
+        System.out.println("6. Delete an event");
     }
 
     public void afiseazaCard()
@@ -98,6 +100,7 @@ public class Ui {
 
     public void adaugaRataInCard()
     {
+        afiseazaRate();
         System.out.println("Choose the duck you want to add to a flock");
         Scanner sc = new Scanner(System.in);
         long idRata = sc.nextLong();
@@ -128,12 +131,13 @@ public class Ui {
         System.out.println("What's the number of lanes you wish for the ducks to race on");
         int lanes = sc.nextInt();
         RaceEvent event = new RaceEvent(name,location);
-        serviceRaceEvent.save(event);
+        System.out.println("Enter the lengths of the lanes you want to race on");
         for (int i = 0; i < lanes; i++)
         {
             double cl = sc.nextDouble();
             event.addculoar(cl);
         }
+        serviceRaceEvent.save(event);
         System.out.println("Event created successfully!");
     }
 
@@ -151,6 +155,7 @@ public class Ui {
 
     public void addDucksToEvent()
     {
+        afiseazaEventuri();
         System.out.println("What's the id of the event:");
         Scanner sc = new Scanner(System.in);
         long idEvent = sc.nextLong();
@@ -165,7 +170,7 @@ public class Ui {
             Duck d = serviceDuck.findOne(choice);
             if (d.getTipRata() == TipRata.SWIMMING) {
                 SwimmingDuck dp = (SwimmingDuck)d;
-                event.addParticipant(dp);
+                serviceRaceEvent.addParticipant(event,d);
                 System.out.println("Added the swimming duck!");
             }
             else
@@ -212,10 +217,13 @@ public class Ui {
 
     public void subscribeEvent()
     {
+        afiseazaEventuri();
         System.out.println("What event would you like to subscribe?");
         Scanner sc = new Scanner(System.in);
         Long id = sc.nextLong();
         RaceEvent event = serviceRaceEvent.findOne(id);
+        afiseazaRate();
+        afiseazapersoane();
         System.out.println("Which user should subscribe?");
         Long idUser = sc.nextLong();
         Persoana user = null;
@@ -227,8 +235,81 @@ public class Ui {
         catch (Exception e)
         {
         }
-        if (user != null)
-            event.subscribe(user);
+        if (user != null) {
+            serviceRaceEvent.addSubscriber(event,user);
+        }
+    }
+
+    public void deletefriendship()
+    {
+        Scanner optiuneFriendship = new Scanner(System.in);
+        showfriendships();
+        System.out.println("Enter the id of the friendship you want to delete");
+        long id = optiuneFriendship.nextInt();
+        serviceFriendship.delete(id);
+    }
+    public void showfriendships()
+    {
+        Iterable<Friendship> allFriendships = serviceFriendship.findAll();
+        for (Friendship friendship1 : allFriendships) {
+            System.out.println(friendship1);
+        }
+    }
+    public void createfriendship()
+    {
+        try {
+            Scanner sc = new Scanner(System.in);
+            Iterable<Duck> allDucks = serviceDuck.findAll();
+            for (Duck duck1 : allDucks) {
+                System.out.println(duck1);
+            }
+            Iterable<Persoana> allpersons = servicePersoana.findAll();
+            for (Persoana persoana : allpersons) {
+                System.out.println(persoana);
+            }
+            System.out.println("Add the id of the first user:");
+            long id1 = sc.nextLong();
+            System.out.println("Add the id of the second user:");
+            long id2 = sc.nextLong();
+            User user1 = serviceDuck.findOne(id1);
+            User user2 = serviceDuck.findOne(id2);
+            if (user1 == null) {
+                user1 = servicePersoana.findOne(id1);
+            }
+            if (user2 == null) {
+                user2 = servicePersoana.findOne(id2);
+            }
+            if (user1 == null || user2 == null)
+                throw new FriendshipException("One or both the users don't exist");
+            else {
+                System.out.println(user1);
+                System.out.println(user2);
+            }
+            Friendship friendship = new Friendship(user1, user2);
+            serviceFriendship.save(friendship);
+            System.out.println("Friendship created successfully!");
+        }
+        catch (FriendshipException e)
+        {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void afiseazapersoane()
+    {
+        Iterable<Persoana> allpersons = servicePersoana.findAll();
+        for (Persoana persoana : allpersons) {
+            System.out.println(persoana);
+        }
+    }
+
+    public void deleteEvent()
+    {
+        Scanner  sc = new Scanner(System.in);
+        afiseazaEventuri();
+        System.out.println("Which event would you like to delete?");
+        Long id = sc.nextLong();
+        serviceRaceEvent.delete(id);
     }
     public void run()
     {
@@ -270,10 +351,7 @@ public class Ui {
                             }
                             break;
                         case 2:
-                            Iterable<Persoana> allpersons = servicePersoana.findAll();
-                            for (Persoana persoana : allpersons) {
-                                System.out.println(persoana);
-                            }
+                            afiseazapersoane();
                             break;
                         case 3:
                             System.out.println("Add the id of the person you wish to delete");
@@ -357,40 +435,13 @@ public class Ui {
                     int optiunefriendship = optiuneFriendship.nextInt();
                     switch (optiunefriendship) {
                         case 1:
-                            Iterable<Duck> allDucks = serviceDuck.findAll();
-                            for (Duck duck1 : allDucks) {
-                                System.out.println(duck1);
-                            }
-                            Iterable<Persoana> allpersons = servicePersoana.findAll();
-                            for (Persoana persoana : allpersons) {
-                                System.out.println(persoana);
-                            }
-                            System.out.println("Add the id of the first user:");
-                            long id1 = optiuneFriendship.nextInt();
-                            System.out.println("Add the id of the second user:");
-                            long id2 = optiuneFriendship.nextInt();
-                            User user1 = serviceDuck.findOne(id1);
-                            User user2 = serviceDuck.findOne(id2);
-                            if (user1 == null) {
-                                user1 = servicePersoana.findOne(id1);
-                            }
-                            if (user2 == null)
-                            {
-                                user2 = servicePersoana.findOne(id2);
-                            }
-                            Friendship friendship = new Friendship(user1,user2);
-                            serviceFriendship.save(friendship);
+                            createfriendship();
                             break;
                         case 2:
-                            Iterable<Friendship> allFriendships = serviceFriendship.findAll();
-                            for (Friendship friendship1 : allFriendships) {
-                                System.out.println(friendship1);
-                            }
+                            showfriendships();
                             break;
                         case 3:
-                            System.out.println("Enter the id of the friendship you want to delete");
-                            long id = optiuneFriendship.nextInt();
-                            serviceFriendship.delete(id);
+                            deletefriendship();
                             break;
                         case 4:
                             System.out.println(serviceStatistics.CommunityNumber());
@@ -419,6 +470,9 @@ public class Ui {
                             break;
                         case 5:
                             subscribeEvent();
+                            break;
+                        case 6:
+                            deleteEvent();
                             break;
                     }
             }

@@ -11,7 +11,7 @@ public class RaceEvent extends Event<SwimmingDuck>{
     private List<Double> culoare;
     public RaceEvent(String name,String location)
     {
-        super(name,location);
+        super(location,name);
         subscribers = new ArrayList<>();
         culoare = new ArrayList<>();
     }
@@ -51,6 +51,6 @@ public class RaceEvent extends Event<SwimmingDuck>{
     @Override
     public String toString()
     {
-        return this.getId()+ " The event" + this.getName() + " is taking place in " + this.getLocation() +" and has " + this.getCuloare().size() + " lanes";
+        return this.getId()+ " The event " + super.getName() + " is taking place in " + super.getLocation() +" and has " + this.getCuloare().size() + " lanes";
     }
 }

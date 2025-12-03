@@ -55,21 +55,30 @@ public class RepositoryFriendshipDb implements Repository<Long, Friendship> {
     public Friendship save(Friendship entity) {
         if (entity == null) throw new IllegalArgumentException("entity must be not null");
         validator.validate(entity);
-        final String sql = "INSERT INTO friendships (id,user1_id, user2_id) VALUES (?,?, ?)";
+        final String sql = "INSERT INTO friendships (user1_id, user2_id) VALUES (?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            ps.setLong(1, entity.getId());
-            ps.setLong(2, entity.getUser1().getId());
-            ps.setLong(3, entity.getUser2().getId());
+            ps.setLong(1, entity.getUser1().getId());
+            ps.setLong(2, entity.getUser2().getId());
             ps.executeUpdate();
-            return null;
+            try (ResultSet keys = ps.getGeneratedKeys()) {
+                if (keys.next()) {
+                    long generatedId = keys.getLong(1);
+                    entity.setId(generatedId);
+                } else {
+                    throw new SQLException("Failed to retrieve generated ID for Card.");
+                }
+                return null;
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    @Override
-    public Friendship delete(Long id) {
+        @Override
+        public Friendship delete(Long id) {
         if (id == null) throw new IllegalArgumentException("id must be not null");
         Friendship existing = findOne(id);
         if (existing == null) return null;

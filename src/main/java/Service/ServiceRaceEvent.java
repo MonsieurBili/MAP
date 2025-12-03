@@ -1,9 +1,12 @@
 package Service;
 
+import Domain.Ducks.Duck;
 import Domain.Ducks.SwimmingDuck;
 import Domain.RaceEvent;
 import Domain.User;
+import Repository.Database.RepositoryEventDb;
 import Repository.IdGenerator;
+import Repository.Repository;
 import Repository.RepositoryRaceEvent;
 
 import java.util.ArrayList;
@@ -11,12 +14,21 @@ import java.util.List;
 
 public class ServiceRaceEvent extends ServiceEntity<Long, RaceEvent> {
     IdGenerator idGenerator;
-    RepositoryRaceEvent repository;
+    RepositoryEventDb repository;
 
-    public ServiceRaceEvent(RepositoryRaceEvent repository) {
+    public ServiceRaceEvent(RepositoryEventDb repository) {
         super(repository);
         this.idGenerator = IdGenerator.getInstance();
         this.repository = repository;
+    }
+
+    public void addParticipant(RaceEvent r,Duck d) {
+        repository.addParticipant(r.getId(), d);
+
+    }
+
+    public void addSubscriber(RaceEvent r,User s) {
+        repository.addSubscriber(r.getId(), s);
     }
     @Override
     public RaceEvent save(RaceEvent event)
@@ -25,6 +37,7 @@ public class ServiceRaceEvent extends ServiceEntity<Long, RaceEvent> {
         repository.save(event);
         return event;
     }
+
 
     public List<SwimmingDuck> solve(RaceEvent event) {
         int lungr = event.getParticipants().size();
