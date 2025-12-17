@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="Controller.FriendshipController"
+            prefHeight="400.0" prefWidth="800.0">
+    <children>
+        <TableView fx:id="tableViewFriendship" layoutX="85.0" layoutY="100.0" prefHeight="200" prefWidth="540">
+            <columns>
+                <TableColumn fx:id="tableIdFriendship" prefWidth="150" text="Id"></TableColumn>
+                <TableColumn fx:id="tableUsernameU1" prefWidth="150" text="Username User 1"></TableColumn>
+                <TableColumn fx:id="tableUsernameU2" prefWidth="150" text="Username User 2"></TableColumn>
+            </columns>
+        </TableView>
+        <VBox spacing="10" layoutX="85" layoutY="310">
+            <HBox spacing="15" alignment="CENTER_LEFT">
+                <Button text="Add Friendship" onAction="#handleAddFriendship" />
+                <Button text="Delete Friendship" onAction="#handleDeleteFriendship" />
+                <Label text="Number of communities:" style="-fx-font-weight: bold;" />
+                <Label fx:id="labelCommunityNumber" text="0" />
+            </HBox>
+
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Most sociable community:" style="-fx-font-weight: bold;" />
+                <Label fx:id="labelMostSociable" text="-" wrapText="true" maxWidth="400" />
+            </HBox>
+        </VBox>
+    </children>
+</AnchorPane>

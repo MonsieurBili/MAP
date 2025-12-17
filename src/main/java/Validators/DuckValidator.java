@@ -20,6 +20,8 @@ public class DuckValidator implements Validator<Duck> {
             errors.append("Duck's speed is invalid can't be lower than 0\n");
         if (duck.getRezistenta() < 0)
             errors.append("Duck's resistance is invalid can't be lower than 0\n");
+        if (duck.getTipRata() == null)
+            errors.append("Duck's type is invalid\n");
         if (!errors.isEmpty())
             throw new ValidationException(errors.toString());
     }

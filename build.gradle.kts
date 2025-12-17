@@ -1,5 +1,7 @@
 plugins {
     id("java")
+    id("org.openjfx.javafxplugin") version "0.0.14"
+    id("application")
 }
 
 group = "org.example"
@@ -16,6 +18,14 @@ dependencies {
     implementation("org.postgresql:postgresql:42.6.0")
 }
 
+javafx {
+    version = "21"
+    modules = listOf("javafx.controls", "javafx.fxml")
+}
+
+application {
+    mainClass.set("org.example.Main")
+}
 tasks.test {
     useJUnitPlatform()
 }

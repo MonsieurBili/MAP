@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="Controller.DuckController"
+            prefHeight="400.0" prefWidth="800.0">
+
+    <children>
+        <TableView fx:id="tableViewDuck" layoutX="85.0" layoutY="100.0" prefHeight="200" prefWidth="540">
+            <columns>
+                <TableColumn fx:id="tableIdDuck" prefWidth="90" text="Id"></TableColumn>
+                <TableColumn fx:id="tableUsernameDuck" prefWidth="90" text="Username"></TableColumn>
+                <TableColumn fx:id="tableDuckType" prefWidth="90" text="Type"></TableColumn>
+                <TableColumn fx:id="tableDuckSpeed" prefWidth="90" text="Speed"></TableColumn>
+                <TableColumn fx:id="tableDuckResistance" prefWidth="90" text="Resistance"></TableColumn>
+                <TableColumn fx:id="tableCardId" prefWidth="90" text="FlockId"></TableColumn>
+            </columns>
+        </TableView>
+        <ComboBox fx:id="comboBoxfilterByType" layoutX="85.0" layoutY="24.0" prefHeight="25.0" prefWidth="120.0" promptText="Type" />
+        <Button fx:id="buttonAddUser" layoutX="85" layoutY="310" prefHeight="10" text="Add User" onAction="#handleAddDuck"/>
+        <Button fx:id="buttonDeleteUser" prefHeight="10" layoutX="160" layoutY="310" text="Delete User" onAction="#handleDeleteUser" />
+    </children>
+</AnchorPane>

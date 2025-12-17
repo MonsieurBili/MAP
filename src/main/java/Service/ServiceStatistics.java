@@ -130,6 +130,32 @@ public class ServiceStatistics {
         }
         System.out.println();
     }
+
+    public String getMostSociableCommunityName() {
+        Map<User, List<User>> graph = createGraph();
+        List<Set<User>> components = getAllComponents(graph);
+
+        if (components.isEmpty()) return "N/A";
+
+        Set<User> bestComp = null;
+        int maxD = -1;
+        for (Set<User> comp : components) {
+            int d = diameter(comp, graph);
+            if (d > maxD) {
+                maxD = d;
+                bestComp = comp;
+            }
+        }
+
+        if (bestComp == null) return "N/A";
+        StringBuilder sb = new StringBuilder();
+        List<User> list = new ArrayList<>(bestComp);
+        for (int i = 0; i < list.size(); i++) {
+            sb.append(list.get(i).getUsername());
+            if (i < list.size() - 1) sb.append(", ");
+        }
+        return sb.toString();
+    }
     private int diameter(Set<User> comp, Map<User, List<User>> adj) {
         if (comp.size() <= 1) return 0;
         List<User> list = new ArrayList<>(comp);

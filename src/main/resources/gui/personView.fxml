@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="Controller.PersonController"
+            prefHeight="400.0" prefWidth="800.0">
+    <children>
+        <TableView fx:id="tableViewPerson" layoutX="85.0" layoutY="100.0" prefHeight="200" prefWidth="540">
+            <columns>
+                <TableColumn fx:id="tableIdPerson" prefWidth="90" text="Id"></TableColumn>
+                <TableColumn fx:id="tableUsernamePerson" prefWidth="90" text="Username"></TableColumn>
+                <TableColumn fx:id="tableLastName" prefWidth="90" text="Last Name"></TableColumn>
+                <TableColumn fx:id="tableFirstName" prefWidth="90" text="First Name"></TableColumn>
+                <TableColumn fx:id="tableDOB" prefWidth="90" text="Data of Birth"></TableColumn>
+                <TableColumn fx:id="tableOcupation" prefWidth="90" text="Occupation"></TableColumn>
+            </columns>
+        </TableView>
+        <Button fx:id="buttonAddUser" layoutX="85" layoutY="310" prefHeight="10" text="Add User" onAction="#handleAddUser" />
+        <Button fx:id="buttonDeleteUser" prefHeight="10" layoutX="160" layoutY="310" text="Delete User" onAction="#handleDeleteUser" />
+    </children>
+</AnchorPane>

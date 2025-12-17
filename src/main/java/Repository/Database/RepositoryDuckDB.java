@@ -159,4 +159,23 @@ public class RepositoryDuckDB implements Repository<Long, Duck> {
         d.setId(id);
         return d;
     }
+
+    public Iterable<Duck> filterByType(String type) {
+        final String sql = "SELECT u.id, u.username, u.email, u.password, u.user_type, " +
+                "d.tip_rata, d.viteza, d.rezistenta, d.idcard " +
+                "FROM users u JOIN ducks d ON u.id = d.id WHERE d.tip_rata = ?";
+        List<Duck> results = new ArrayList<>();
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)){
+                ps.setString(1,type);
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        results.add(mapRow(rs));
+                    }
+                }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return results;
+    }
 }

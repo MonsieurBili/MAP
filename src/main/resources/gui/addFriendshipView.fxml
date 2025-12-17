@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="Controller.AddFriendshipController"
+            prefHeight="400.0" prefWidth="600.0">
+        <children>
+            <VBox spacing="20" AnchorPane.topAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
+            <Label text="Add new friendship"></Label>
+            <GridPane hgap="10" vgap="10">
+            <Label text="First user id:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+            <TextField fx:id="textFieldUser1" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+            <Label text="Second user id" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+            <TextField fx:id="textFieldUser2" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                <HBox spacing="15" alignment="CENTER_RIGHT" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                    <Button text="Save" onAction="#handleSave" prefWidth="80"/>
+                    <Button text="Cancel" onAction="#handleCancel" prefWidth="80"/>
+                </HBox>
+            </GridPane>
+            </VBox>
+        </children>
+</AnchorPane>
