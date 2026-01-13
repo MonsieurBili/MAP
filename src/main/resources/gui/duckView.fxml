@@ -6,12 +6,20 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
+<?import javafx.geometry.Insets?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="Controller.DuckController"
             prefHeight="400.0" prefWidth="800.0">
 
     <children>
+        <VBox alignment="TOP_CENTER">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <HBox alignment="CENTER_LEFT">
+                <ComboBox fx:id="comboBoxfilterByType" prefWidth="150.0" promptText="Filter by Type" />
+            </HBox>
         <TableView fx:id="tableViewDuck" layoutX="85.0" layoutY="100.0" prefHeight="200" prefWidth="540">
             <columns>
                 <TableColumn fx:id="tableIdDuck" prefWidth="90" text="Id"></TableColumn>
@@ -22,8 +30,15 @@
                 <TableColumn fx:id="tableCardId" prefWidth="90" text="FlockId"></TableColumn>
             </columns>
         </TableView>
-        <ComboBox fx:id="comboBoxfilterByType" layoutX="85.0" layoutY="24.0" prefHeight="25.0" prefWidth="120.0" promptText="Type" />
+            <HBox>
         <Button fx:id="buttonAddUser" layoutX="85" layoutY="310" prefHeight="10" text="Add User" onAction="#handleAddDuck"/>
         <Button fx:id="buttonDeleteUser" prefHeight="10" layoutX="160" layoutY="310" text="Delete User" onAction="#handleDeleteUser" />
+        </HBox>
+        <HBox spacing="10" alignment="CENTER">
+            <Button fx:id="btnPrevious" text="Previous" onAction="#handlePrevious"/>
+            <Label fx:id="lblPage" text="Pagina 1"/>
+            <Button fx:id="btnNext" text="Next" onAction="#handleNext"/>
+        </HBox>
+        </VBox>
     </children>
 </AnchorPane>

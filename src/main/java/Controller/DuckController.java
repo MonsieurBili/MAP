@@ -19,6 +19,8 @@ import util.EntityChangeEvent;
 import Observer.Observer;
 import Service.ServiceDuck;
 import util.EntityChangeEventType;
+import util.paging.Page;
+import util.paging.Pageable;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -52,6 +54,19 @@ public class DuckController implements ObserverGui<EntityChangeEvent> {
     @FXML
     private ComboBox<TipRata> comboBoxfilterByType;
 
+    @FXML
+    private Button btnNext;
+    @FXML
+    private Button btnPrevious;
+    @FXML
+    private Label lblPage;
+
+
+
+    private int currentPage = 0;
+    private int pageSize = 7;
+    private int totalElements = 0;
+    private String currentFilter = null;
 
     public void setDuckService(ServiceDuck duckService) {
         this.serviceDuck = duckService;
@@ -87,23 +102,30 @@ public class DuckController implements ObserverGui<EntityChangeEvent> {
             if (valoareNoua != null) {
                 handleFilterByType(valoareNoua);
             }
-            else
+            else {
+                currentFilter = null;
+                currentPage = 0;
                 initModel();
+            }
         });
     }
 
     private void initModel() {
 
+        Pageable pageable = new Pageable(currentPage, pageSize);
+        Page<Duck> page = serviceDuck.findAllOnPageFiltered(pageable, currentFilter);
+
         List<Duck> ducks = new ArrayList<>();
-        ducks = (List<Duck>) serviceDuck.findAll();
+        page.getElementsOnPage().forEach(ducks::add);
+
+        this.totalElements = page.getTotalNumberOfElements();
         model.setAll(ducks);
+        updateButtonsState();
     }
     private void handleFilterByType(TipRata selectedType) {
-        String typeString = selectedType.toString();
-        Iterable<Duck> filteredDucks = serviceDuck.filterByType(typeString);
-
-        model.clear();
-        model.addAll((List<Duck>) filteredDucks);
+        currentFilter = selectedType.toString();
+        currentPage = 0;
+        initModel();
     }
     @FXML
     public void handleAddDuck() {
@@ -143,5 +165,23 @@ public class DuckController implements ObserverGui<EntityChangeEvent> {
             errorAlert.setContentText("Please select a duck from the table.");
             errorAlert.showAndWait();
         }
+    }
+    @FXML
+    public void handleNext() {
+        if ((currentPage + 1) * pageSize < totalElements) {
+            currentPage++;
+            initModel();
+        }
+    }
+    public void handlePrevious() {
+        if (currentPage > 0) {
+            currentPage--;
+            initModel();
+        }
+    }
+    private void updateButtonsState() {
+        btnPrevious.setDisable(currentPage == 0);
+        btnNext.setDisable((currentPage + 1) * pageSize >= totalElements);
+        lblPage.setText("Pagina " + (currentPage + 1));
     }
 }

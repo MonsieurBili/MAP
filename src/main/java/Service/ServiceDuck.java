@@ -9,6 +9,8 @@ import Repository.IdGenerator;
 import Repository.Repository;
 import Repository.RepositoryDuck;
 import util.EntityChangeEvent;
+import util.paging.Page;
+import util.paging.Pageable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,11 +32,14 @@ public class ServiceDuck extends ServiceEntity<Long, Duck> implements Observable
         repository.save(duck);
         return duck;
     }
-
-    public Iterable<Duck> filterByType(String Type)
-    {
-       return repository.filterByType(Type);
+    public Page<Duck> findAllOnPage(Pageable pageable) {
+        return repository.findAllOnPage(pageable);
     }
+
+    public Page<Duck> findAllOnPageFiltered(Pageable pageable, String typeFilter) {
+        return repository.findAllOnPageFiltered(pageable, typeFilter);
+    }
+
     @Override
     public void addObserver(ObserverGui<EntityChangeEvent> e) {
         observers.add(e);

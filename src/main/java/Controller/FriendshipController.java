@@ -81,8 +81,6 @@ public class FriendshipController implements ObserverGui<EntityChangeEvent> {
         List<Friendship> friendshipList = (List<Friendship>)serviceFriendship.findAll();
         model.setAll(friendshipList);
         updateStatistics();
-        String sociableComp = serviceStatistics.getMostSociableCommunityName();
-        labelMostSociable.setText(sociableComp);
     }
 
     @FXML
@@ -130,6 +128,8 @@ public class FriendshipController implements ObserverGui<EntityChangeEvent> {
         if (serviceStatistics != null) {
             int num = serviceStatistics.CommunityNumber();
             labelCommunityNumber.setText(String.valueOf(num));
+            String sociableComp = serviceStatistics.getMostSociableCommunityName();
+            labelMostSociable.setText(sociableComp);
         }
     }
 }

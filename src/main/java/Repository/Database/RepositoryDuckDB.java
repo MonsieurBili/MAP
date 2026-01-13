@@ -5,12 +5,15 @@ import Domain.Ducks.DuckFactory;
 import Domain.Ducks.TipRata;
 import Repository.Repository;
 import Validators.Validator;
+import Repository.PagingRepository;
+import util.paging.Page;
+import util.paging.Pageable;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RepositoryDuckDB implements Repository<Long, Duck> {
+public class RepositoryDuckDB implements PagingRepository<Long, Duck> {
     private final Validator<Duck> validator;
     private final DuckFactory duckFactory;
 
@@ -18,6 +21,38 @@ public class RepositoryDuckDB implements Repository<Long, Duck> {
         this.validator = validator;
         this.duckFactory = DuckFactory.getInstance();
     }
+    @Override
+    public Page<Duck> findAllOnPage(Pageable pageable) {
+        List<Duck> ducksOnPage = new ArrayList<>();
+        int totalCount = 0;
+        String countSql = "SELECT COUNT(*) AS count FROM users u JOIN ducks d ON u.id = d.id";
+        String pagingSql = "SELECT u.id, u.username, u.email, u.password, u.user_type, " +
+                "d.tip_rata, d.viteza, d.rezistenta, d.idcard " +
+                "FROM users u JOIN ducks d ON u.id = d.id " + "ORDER BY u.id ASC " + "LIMIT ? OFFSET ?";
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            try (PreparedStatement psCount = conn.prepareStatement(countSql);
+                 ResultSet rsCount = psCount.executeQuery()) {
+                if (rsCount.next()) {
+                    totalCount = rsCount.getInt("count");
+                }
+            }
+            if (totalCount > 0) {
+                try (PreparedStatement psPaging = conn.prepareStatement(pagingSql)) {
+                    psPaging.setInt(1, pageable.getPageSize());
+                    psPaging.setInt(2, pageable.getPageNumber() * pageable.getPageSize());
+                    try (ResultSet rs = psPaging.executeQuery()) {
+                        while (rs.next()) {
+                            ducksOnPage.add(mapRow(rs));
+                        }
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return new Page<>(ducksOnPage, totalCount);
+    }
+
 
     @Override
     public Duck findOne(Long id) {
@@ -177,5 +212,64 @@ public class RepositoryDuckDB implements Repository<Long, Duck> {
             throw new RuntimeException(e);
         }
         return results;
+    }
+
+    public Page<Duck> findAllOnPageFiltered(Pageable pageable, String typeFilter) {
+        List<Duck> ducksOnPage = new ArrayList<>();
+        int totalCount = 0;
+
+        String countSql;
+        String pagingSql;
+
+        if (typeFilter == null || typeFilter.isEmpty()) {
+            countSql = "SELECT COUNT(*) AS count FROM users u JOIN ducks d ON u.id = d.id";
+            pagingSql = "SELECT u.id, u.username, u.email, u.password, u.user_type, " +
+                    "d.tip_rata, d.viteza, d.rezistenta, d.idcard " +
+                    "FROM users u JOIN ducks d ON u.id = d.id " +
+                    "ORDER BY u.id ASC " +
+                    "LIMIT ? OFFSET ?";
+        } else {
+            countSql = "SELECT COUNT(*) AS count FROM users u JOIN ducks d ON u.id = d.id WHERE d.tip_rata = ?";
+            pagingSql = "SELECT u.id, u.username, u.email, u.password, u.user_type, " +
+                    "d.tip_rata, d.viteza, d.rezistenta, d.idcard " +
+                    "FROM users u JOIN ducks d ON u.id = d.id " +
+                    "WHERE d.tip_rata = ? " +
+                    "ORDER BY u.id ASC " +
+                    "LIMIT ? OFFSET ?";
+        }
+
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            try (PreparedStatement psCount = conn.prepareStatement(countSql)) {
+                if (typeFilter != null && !typeFilter.isEmpty()) {
+                    psCount.setString(1, typeFilter);
+                }
+                try (ResultSet rsCount = psCount.executeQuery()) {
+                    if (rsCount.next()) {
+                        totalCount = rsCount.getInt("count");
+                    }
+                }
+            }
+
+            if (totalCount > 0) {
+                try (PreparedStatement psPaging = conn.prepareStatement(pagingSql)) {
+                    if (typeFilter != null && !typeFilter.isEmpty()) {
+                        psPaging.setString(1, typeFilter);
+                        psPaging.setInt(2, pageable.getPageSize());
+                        psPaging.setInt(3, pageable.getPageNumber() * pageable.getPageSize());
+                    } else {
+                        psPaging.setInt(1, pageable.getPageSize());
+                        psPaging.setInt(2, pageable.getPageNumber() * pageable.getPageSize());
+                    }
+                    try (ResultSet rs = psPaging.executeQuery()) {
+                        while (rs.next()) {
+                            ducksOnPage.add(mapRow(rs));
+                        }
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return new Page<>(ducksOnPage, totalCount);
     }
 }
