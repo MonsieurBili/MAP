@@ -6,6 +6,7 @@ import Domain.Ducks.TipRata;
 import Repository.Repository;
 import Validators.Validator;
 import Repository.PagingRepository;
+import util.PasswordEncoder;
 import util.paging.Page;
 import util.paging.Pageable;
 
@@ -102,7 +103,7 @@ public class RepositoryDuckDB implements PagingRepository<Long, Duck> {
             try (PreparedStatement psUser = conn.prepareStatement(userSql, Statement.RETURN_GENERATED_KEYS)) {
                 psUser.setString(1, entity.getUsername());
                 psUser.setString(2, entity.getEmail());
-                psUser.setString(3, entity.getPassword());
+                psUser.setString(3, PasswordEncoder.encode(entity.getPassword()));
                 psUser.setString(4, "DUCK");
                 psUser.executeUpdate();
 

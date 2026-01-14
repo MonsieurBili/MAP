@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="Controller.LoginController"
+      alignment="CENTER" spacing="20" prefWidth="400" prefHeight="300"
+      style="-fx-background-color: #f4f4f4;">
+
+    <padding>
+        <Insets top="40" right="40" bottom="40" left="40"/>
+    </padding>
+
+    <Label text="Duck Network" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: #333;"/>
+    <Label text="Autentificare" style="-fx-font-size: 14; -fx-text-fill: #666;"/>
+
+
+    <VBox spacing="15" alignment="CENTER" maxWidth="280">
+
+        <VBox spacing="5">
+            <Label text="Username:" style="-fx-font-weight: bold;"/>
+            <TextField fx:id="textFieldUsername" promptText="Username" prefWidth="250"/>
+        </VBox>
+
+        <VBox spacing="5">
+            <Label text="Password:" style="-fx-font-weight: bold;"/>
+            <PasswordField fx:id="passwordFieldPassword" promptText="Password" prefWidth="250"/>
+        </VBox>
+
+        <Label fx:id="labelError" text="" style="-fx-text-fill: red; -fx-font-size: 12;"
+               visible="false" managed="true"/>
+
+        <HBox spacing="10" alignment="CENTER">
+            <Button fx:id="buttonLogin" text="Login" onAction="#handleLogin"
+                    style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;"
+                    prefWidth="120" prefHeight="35"/>
+            <Button fx:id="buttonRegister" text="Register" onAction="#handleRegister"
+                    style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;"
+                    prefWidth="120" prefHeight="35"/>
+        </HBox>
+
+    </VBox>
+
+</VBox>
+

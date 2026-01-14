@@ -3,6 +3,7 @@ package Repository.Database;
 import Domain.Person.Persoana;
 import Repository.Repository;
 import Validators.Validator;
+import util.PasswordEncoder;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -62,7 +63,7 @@ public class RepositoryPersonDB implements Repository<Long, Persoana> {
             try (PreparedStatement psUser = conn.prepareStatement(userSql, Statement.RETURN_GENERATED_KEYS)) {
                 psUser.setString(1, entity.getUsername());
                 psUser.setString(2, entity.getEmail());
-                psUser.setString(3, entity.getPassword());
+                psUser.setString(3, PasswordEncoder.encode(entity.getPassword()));
                 psUser.setString(4, "PERSON");
                 psUser.executeUpdate();
 

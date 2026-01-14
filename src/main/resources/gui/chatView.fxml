@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="Controller.ChatController"
+      spacing="10" prefWidth="600" prefHeight="500">
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+
+    <HBox spacing="15" alignment="CENTER_LEFT">
+        <Label text="Send to:" style="-fx-font-weight: bold;"/>
+        <ComboBox fx:id="comboBoxRecipient" prefWidth="200" promptText="Select user"/>
+    </HBox>
+
+
+    <Label fx:id="lblConversation" text="Select a user to chat with"
+           style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #333;"/>
+
+    <Separator/>
+
+
+    <ListView fx:id="listViewMessages" VBox.vgrow="ALWAYS"
+              style="-fx-background-color: #f5f5f5;"/>
+
+    <Separator/>
+
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <TextField fx:id="textFieldMessage" HBox.hgrow="ALWAYS"
+                   promptText="Type your message..." onAction="#handleSendMessage"/>
+        <Button text="Send" onAction="#handleSendMessage"
+                style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;"
+                prefWidth="80"/>
+    </HBox>
+
+    <HBox fx:id="replyBox" spacing="10" alignment="CENTER_LEFT" visible="false" managed="false">
+        <Label fx:id="lblReplyTo" text="Replying to: " style="-fx-font-style: italic; -fx-text-fill: #666;"/>
+        <Button text="Cancel" onAction="#handleCancelReply"
+                style="-fx-background-color: #f44336; -fx-text-fill: white;" prefWidth="60"/>
+    </HBox>
+</VBox>
+

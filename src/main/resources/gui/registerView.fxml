@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<ScrollPane xmlns:fx="http://javafx.com/fxml" fx:controller="Controller.RegisterController"
+            fitToWidth="true" style="-fx-background-color: #f4f4f4;">
+
+    <VBox alignment="CENTER" spacing="15" prefWidth="450"
+          style="-fx-background-color: #f4f4f4;">
+
+        <padding>
+            <Insets top="20" right="40" bottom="20" left="40"/>
+        </padding>
+
+        <Label text="Duck Network" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: #333;"/>
+        <Label text="Register new Account" style="-fx-font-size: 14; -fx-text-fill: #666;"/>
+
+        <VBox spacing="10" alignment="CENTER" maxWidth="320">
+
+            <VBox spacing="3">
+                <Label text="Username:" style="-fx-font-weight: bold;"/>
+                <TextField fx:id="textFieldUsername" promptText="Username" prefWidth="300"/>
+            </VBox>
+
+            <VBox spacing="3">
+                <Label text="Email:" style="-fx-font-weight: bold;"/>
+                <TextField fx:id="textFieldEmail" promptText="Email" prefWidth="300"/>
+            </VBox>
+
+            <VBox spacing="3">
+                <Label text="Password:" style="-fx-font-weight: bold;"/>
+                <PasswordField fx:id="passwordFieldPassword" promptText="Password" prefWidth="300"/>
+            </VBox>
+
+            <VBox spacing="3">
+                <Label text="Confirm Password:" style="-fx-font-weight: bold;"/>
+                <PasswordField fx:id="passwordFieldConfirm" promptText="Retype Password" prefWidth="300"/>
+            </VBox>
+
+            <VBox spacing="3">
+                <Label text="User Type:" style="-fx-font-weight: bold;"/>
+                <ComboBox fx:id="comboBoxUserType" promptText="Select type" prefWidth="300"/>
+            </VBox>
+
+            <Separator/>
+
+            <VBox fx:id="personFieldsContainer" spacing="8" visible="false" managed="false">
+                <Label text="Person Details:" style="-fx-font-weight: bold; -fx-font-size: 13;"/>
+
+                <HBox spacing="10">
+                    <VBox spacing="3" HBox.hgrow="ALWAYS">
+                        <Label text="Last Name:"/>
+                        <TextField fx:id="textFieldNume" promptText="Last Name"/>
+                    </VBox>
+                    <VBox spacing="3" HBox.hgrow="ALWAYS">
+                        <Label text="First Name:"/>
+                        <TextField fx:id="textFieldPrenume" promptText="First Name"/>
+                    </VBox>
+                </HBox>
+
+                <VBox spacing="3">
+                    <Label text="Date of Birth:"/>
+                    <DatePicker fx:id="datePickerNastere" prefWidth="300"/>
+                </VBox>
+
+                <VBox spacing="3">
+                    <Label text="Occupation:"/>
+                    <TextField fx:id="textFieldOcupatie" promptText="Occupation"/>
+                </VBox>
+            </VBox>
+
+            <VBox fx:id="duckFieldsContainer" spacing="8" visible="false" managed="false">
+                <Label text="Duck Details:" style="-fx-font-weight: bold; -fx-font-size: 13;"/>
+
+                <VBox spacing="3">
+                    <Label text="Duck Type:"/>
+                    <ComboBox fx:id="comboBoxTipRata" prefWidth="300"/>
+                </VBox>
+
+                <HBox spacing="10">
+                    <VBox spacing="3" HBox.hgrow="ALWAYS">
+                        <Label text="Speed:"/>
+                        <TextField fx:id="textFieldViteza" promptText="0.0"/>
+                    </VBox>
+                    <VBox spacing="3" HBox.hgrow="ALWAYS">
+                        <Label text="Resistance:"/>
+                        <TextField fx:id="textFieldRezistenta" promptText="0.0"/>
+                    </VBox>
+                </HBox>
+            </VBox>
+
+            <Separator/>
+
+            <Label fx:id="labelMessage" text="" style="-fx-font-size: 12;" visible="false"/>
+
+            <HBox spacing="10" alignment="CENTER">
+                <Button fx:id="buttonRegister" text="Register" onAction="#handleRegister"
+                        style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;"
+                        prefWidth="130" prefHeight="35"/>
+                <Button fx:id="buttonBack" text="Back to Login" onAction="#handleBack"
+                        style="-fx-background-color: #9E9E9E; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;"
+                        prefWidth="130" prefHeight="35"/>
+            </HBox>
+
+        </VBox>
+    </VBox>
+</ScrollPane>

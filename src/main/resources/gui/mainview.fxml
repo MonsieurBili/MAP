@@ -22,6 +22,9 @@
             <Tab text="Friendships" closable="false">
                 <fx:include fx:id="friendshipView" source="friendshipView.fxml"/>
             </Tab>
+            <Tab text="Chat" closable="false">
+                <fx:include fx:id="chatView" source="chatView.fxml"/>
+            </Tab>
         </tabs>
     </TabPane>
     </children>
