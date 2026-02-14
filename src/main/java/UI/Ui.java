@@ -117,6 +117,7 @@ public class Ui {
             d.setIdCard(idCard);
             serviceDuck.update(d);
             card.addMembri(d);
+            serviceCard.update(card);
             System.out.println("Adaugarea reusita cu succes !");
         }
     }
